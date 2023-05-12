@@ -8,15 +8,21 @@
 
 /**
  * main - simple shell
+ * @argc : number of argument
+ * @argv : argument
  * Return: 0 on success,
  */
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	char command[MAX_COMMAND_LENGTH];
 	int exit_shell = 0;
 	pid_t pid;
 
+	if (argc < 1)
+	{
+		return (-1);
+	}
 	while (!exit_shell)
 	{
 		printf("$ ");
@@ -32,7 +38,7 @@ int main(void)
 			if (pid == 0)
 			{
 				execlp(command, command, NULL);
-				fprintf(stderr, "%s: command not found\n", command);
+				fprintf(stderr, "%s: No such file or directory\n", argv[0]);
 				exit(EXIT_FAILURE);
 			}
 			else if (pid > 0)
