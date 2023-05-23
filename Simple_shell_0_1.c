@@ -1,32 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/wait.h>
-
-#define MAX_COMMAND_LENGTH 100
-
+#include "main.h"
 /**
  * main - simple shell
- * @argc : number of argument
- * @argv : argument
+ * @argtaha : number of argument
+ * @argmouch : argument
  * Return: 0 on success,
  */
 
-int main(int argc, char *argv[])
+int main(int argtaha, char *argmouch[])
 {
-	char command[MAX_COMMAND_LENGTH];
+	char command[MAX_COM_LEN];
 	int exit_shell = 0;
 	pid_t pid;
 
-	if (argc < 1)
+	if (argtaha < 1)
 	{
 		return (-1);
 	}
 	while (!exit_shell)
 	{
-		printf("$ ");
-		if (fgets(command, MAX_COMMAND_LENGTH, stdin) == NULL)
+		printftm("#cisfun$ ");
+		if (fgetstm(command, MAX_COM_LEN, stdin) == NULL)
 		{
 			exit_shell = 1;
 		}
@@ -37,8 +30,8 @@ int main(int argc, char *argv[])
 
 			if (pid == 0)
 			{
-				execlp(command, command, NULL);
-				fprintf(stderr, "%s: No such file or directory\n", argv[0]);
+				execlptm(command, command, NULL);
+				fprintftm(stderr, "%s: No such file or directory\n", argmouch[0]);
 				exit(EXIT_FAILURE);
 			}
 			else if (pid > 0)
@@ -47,7 +40,7 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-				fprintf(stderr, "Error forking process\n");
+				fprintftm(stderr, "Error forking process\n");
 				exit(EXIT_FAILURE);
 			}
 		}
