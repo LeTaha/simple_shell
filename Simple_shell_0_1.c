@@ -1,49 +1,55 @@
 #include "main.h"
+
+#define BUFFER_SIZE 1024
 /**
- * main - simple shell
- * @argtaha : number of argument
- * @argmouch : argument
- * Return: 0 on success,
+ * display_prompt - Display the shell prompt
  */
-
-int main(int argtaha, char *argmouch[])
+void display_prompt(void)
 {
-	char command[MAX_COM_LEN];
-	int exit_shell = 0;
-	pid_t pid;
+	printf("#cisfun$ ");
+}
+/**
+ * execute_command - Execute the given command
+ * @command: The command to execute
+ */
+void execute_command(char *command)
+{
+	pid_t pid = fork();
 
-	if (argtaha < 1)
+	if (pid < 0)
 	{
-		return (-1);
+		perror("fork failed");
+		exit(EXIT_FAILURE);
 	}
-	while (!exit_shell)
+	else if (pid == 0)
 	{
-		printftm("#cisfun$ ");
-		if (fgetstm(command, MAX_COM_LEN, stdin) == NULL)
-		{
-			exit_shell = 1;
-		}
-		else
-		{
-			command[strcspn(command, "\n")] = '\0';
-			pid = fork();
+		execlp(command, command, (char *)NULL);
+		perror("exec error");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		wait(NULL);
+	}
+}
+/**
+ * main - Entry point of the shell program
+ *
+ * Return: 0 on success
+ */
+int main(void)
+{
+	char buffer[BUFFER_SIZE];
 
-			if (pid == 0)
-			{
-				execlptm(command, command, NULL);
-				fprintftm(stderr, "%s: No such file or directory\n", argmouch[0]);
-				exit(EXIT_FAILURE);
-			}
-			else if (pid > 0)
-			{
-				wait(NULL);
-			}
-			else
-			{
-				fprintftm(stderr, "Error forking process\n");
-				exit(EXIT_FAILURE);
-			}
+	while (1)
+	{
+		display_prompt();
+		if (fgets(buffer, BUFFER_SIZE, stdin) == NULL)
+		{
+			break;
 		}
+		buffer[strcspn(buffer, "\n")] = '\0';
+		execute_command(buffer);
 	}
 	return (0);
 }
