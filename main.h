@@ -1,3 +1,6 @@
+#ifndef _MAIN_H_
+#define _MAIN_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,9 +13,12 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stddef.h>
+
 #define MAX_COM_LEN 100
 
 char *fgetstm(char *str, int size, FILE *stream);
 int printftm(const char *format, ...);
 int fprintftm(FILE *stream, const char *format, ...);
-int execlptm(const char *file, const char *arg, ... );
+int execlptm(const char *file, const char *arg, ...);
+
+#endif
