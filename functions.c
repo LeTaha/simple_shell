@@ -1,5 +1,13 @@
 #include "main.h"
-
+/**
+ * fgetstm - Get a line from the standard input
+ * @str : string
+ * @size : int
+ * @stream : file
+ *
+ * Return: str
+ * The line read from the standard input.
+ */
 char *fgetstm(char *str, int size, FILE *stream)
 {
 	int i;
@@ -30,6 +38,12 @@ char *fgetstm(char *str, int size, FILE *stream)
 	}
 	return (str);
 }
+/**
+ * printftm - Print formatted output to the standard output
+ * @format: The format string
+ * @...: Variadic arguments based on the format string
+ * Return: count
+ */
 int printftm(const char *format, ...)
 {
 	va_list args;
@@ -41,6 +55,13 @@ int printftm(const char *format, ...)
 	va_end(args);
 	return (count);
 }
+/**
+ * fprintftm - Print formatted output to a file stream
+ * @stream: The file stream to write to
+ * @format: The format string
+ * @...: Variadic arguments based on the format string
+ * Return: count
+ */
 int fprintftm(FILE *stream, const char *format, ...)
 {
 	va_list args;
@@ -51,6 +72,13 @@ int fprintftm(FILE *stream, const char *format, ...)
 	va_end(args);
 	return (count);
 }
+/**
+ * execlptm - Execute a program
+ * @file: The path to the program
+ * @arg: const char
+ * @...: Variadic arguments representing the program and its arguments
+ * Return: -1
+ */
 int execlptm(const char *file, const char *arg, ...)
 {
 	va_list args;
