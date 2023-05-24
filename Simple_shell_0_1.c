@@ -1,56 +1,53 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/wait.h>
-
-#define MAX_COMMAND_LENGTH 100
-
+#include "main.h"
 /**
- * main - simple shell
- * @argc : number of argument
- * @argv : argument
- * Return: 0 on success,
+ * shell_loop - Run the shell loop
  */
-
-int main(int argc, char *argv[])
+void shell_loop(void)
 {
-	char command[MAX_COMMAND_LENGTH];
-	int exit_shell = 0;
-	pid_t pid;
+	char *input;
+	char **args;
+	int status;
 
-	if (argc < 1)
-	{
-		return (-1);
-	}
-	while (!exit_shell)
-	{
+	do {
 		printf("$ ");
-		if (fgets(command, MAX_COMMAND_LENGTH, stdin) == NULL)
-		{
-			exit_shell = 1;
-		}
-		else
-		{
-			command[strcspn(command, "\n")] = '\0';
-			pid = fork();
+		input = read_input();
+		args = split_input(input);
+		status = execute(args);
 
-			if (pid == 0)
-			{
-				execlp(command, command, NULL);
-				fprintf(stderr, "%s: No such file or directory\n", argv[0]);
-				exit(EXIT_FAILURE);
-			}
-			else if (pid > 0)
-			{
-				wait(NULL);
-			}
-			else
-			{
-				fprintf(stderr, "Error forking process\n");
-				exit(EXIT_FAILURE);
-			}
+		free(input);
+		free(args);
+	} while (status);
+}
+/**
+ * execute - Execute the given command
+ * @args: The array of arguments
+ *
+ * Return: The status of the execution
+ */
+int execute(char **args)
+{
+	pid_t pid;
+	int status;
+
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		exit(EXIT_FAILURE);
+	}
+	else if (pid == 0)
+	{
+		if (execvp(args[0], args) == -1)
+		{
+			perror("execvp");
+			exit(EXIT_FAILURE);
 		}
 	}
-	return (0);
+	else
+	{
+		do {
+			waitpid(pid, &status, WUNTRACED);
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+	}
+	return (1);
 }
