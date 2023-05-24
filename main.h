@@ -1,24 +1,19 @@
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef SHELL_H
+#define SHELL_H
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <stddef.h>
+#include <unistd.h>
 
-#define MAX_COM_LEN 100
+#define TOKEN_BUFFER_SIZE 64
+#define TOKEN_DELIMITERS " \t\r\n\a"
 
-char *fgetstm(char *str, int size, FILE *stream);
-int printftm(const char *format, ...);
-int fprintftm(FILE *stream, const char *format, ...);
-int execlptm(const char *file, const char *arg, ...);
+char *read_input();
+char **split_input(char *input);
+void shell_loop();
+int execute(char **args);
 
 #endif

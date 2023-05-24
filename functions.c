@@ -1,118 +1,63 @@
 #include "main.h"
 /**
- * fgetstm - Get a line from the standard input
- * @str : string
- * @size : int
- * @stream : file
+ * Read input from stdin and return a dynamically allocated string.
  *
- * Return: str
- * The line read from the standard input.
+ * This function reads a line of input from
+ * the standard input (stdin) and returns
+ * the input as a dynamically allocated string.
+ * The caller is responsible for freeing
+ * the allocated memory when it is no longer needed.
+ *
+ * @return The input string read from stdin.
+ * The caller is responsible for freeing the allocated memory.
  */
-char *fgetstm(char *str, int size, FILE *stream)
+char *read_input()
 {
-	int i;
-	int ch;
+	char *input = NULL;
+	size_t bufsize = 0;
 
-	if (size <= 0 || str == NULL || stream == NULL)
-	{
-		return (NULL);
-	}
-	for (i = 0; i < size - 1; i++)
-	{
-		ch = fgetc(stream);
-		if (ch == EOF)
-		{
-			break;
-		}
-		str[i] = (char)ch;
-		if (ch == '\n')
-		{
-			i++;
-			break;
-		}
-	}
-	str[i] = '\0';
-	if (i == 0 && ch == EOF)
-	{
-		return (NULL);
-	}
-	return (str);
+	getline(&input, &bufsize, stdin);
+	return (input);
 }
 /**
- * printftm - Print formatted output to the standard output
- * @format: The format string
- * @...: Variadic arguments based on the format string
- * Return: count
+ * Splits the input string into an array of tokens based on delimiters.
+ *
+ * @param input The input string to be split.
+ * @return The array of tokens. The last element in the array is set to NULL.
+ * The caller is responsible for freeing the allocated memory.
  */
-int printftm(const char *format, ...)
+char **split_input(char *input)
 {
-	va_list args;
-	int count;
+	int bufsize = TOKEN_BUFFER_SIZE;
+	int position = 0;
+	char **tokens = malloc(bufsize * sizeof(char *));
+	char *token;
 
-	va_start(args, format);
-	count = vprintf(format, args);
-
-	va_end(args);
-	return (count);
-}
-/**
- * fprintftm - Print formatted output to a file stream
- * @stream: The file stream to write to
- * @format: The format string
- * @...: Variadic arguments based on the format string
- * Return: count
- */
-int fprintftm(FILE *stream, const char *format, ...)
-{
-	va_list args;
-	int count;
-
-	va_start(args, format);
-	count = vfprintf(stream, format, args);
-	va_end(args);
-	return (count);
-}
-/**
- * execlptm - Execute a program
- * @file: The path to the program
- * @arg: const char
- * @...: Variadic arguments representing the program and its arguments
- * Return: -1
- */
-int execlptm(const char *file, const char *arg, ...)
-{
-	va_list args;
-	const char *current_arg;
-	int count = 0;
-	int i;
-	char **args_array;
-
-	va_start(args, arg);
-	current_arg = arg;
-	while (current_arg != NULL)
+	if (!tokens)
 	{
-		count++;
-		current_arg = va_arg(args, const char *);
-	}
-	va_end(args);
-
-	args_array = (char **)malloc((count + 2) * sizeof(char *));
-	if (args_array == NULL)
-	{
-		return (-1);
+	fprintf(stderr, "Allocation error\n");
+	exit(EXIT_FAILURE);
 	}
 
-	args_array[0] = (char *)file;
-	current_arg = arg;
-	for (i = 1; i <= count; i++)
+	token = strtok(input, TOKEN_DELIMITERS);
+	while (token != NULL)
 	{
-		args_array[i] = (char *)current_arg;
-		current_arg = va_arg(args, const char *);
+	tokens[position] = token;
+	position++;
+
+	if (position >= bufsize)
+	{
+	bufsize += TOKEN_BUFFER_SIZE;
+	tokens = realloc(tokens, bufsize * sizeof(char *));
+	if (!tokens)
+	{
+	fprintf(stderr, "Allocation error\n");
+	exit(EXIT_FAILURE);
 	}
-	args_array[count + 1] = NULL;
+	}
 
-	execvp(file, args_array);
-	free(args_array);
-
-	return (-1);
+	token = strtok(NULL, TOKEN_DELIMITERS);
+	}
+	tokens[position] = NULL;
+	return (tokens);
 }

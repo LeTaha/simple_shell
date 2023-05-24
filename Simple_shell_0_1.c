@@ -1,55 +1,45 @@
 #include "main.h"
 
-#define BUFFER_SIZE 1024
-/**
- * display_prompt - Display the shell prompt
- */
-void display_prompt(void)
+void shell_loop(void)
 {
-	printf("#cisfun$ ");
-}
-/**
- * execute_command - Execute the given command
- * @command: The command to execute
- */
-void execute_command(char *command)
-{
-	pid_t pid = fork();
+	char *input;
+	char **args;
+	int status;
 
+	do {
+		printf("$ ");
+		input = read_input();
+		args = split_input(input);
+		status = execute(args);
+
+		free(input);
+		free(args);
+	} while (status);
+}
+int execute(char **args)
+{
+	pid_t pid;
+	int status;
+
+	pid = fork();
 	if (pid < 0)
 	{
-		perror("fork failed");
+		perror("fork");
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
 	{
-		execlp(command, command, (char *)NULL);
-		perror("exec error");
-		exit(EXIT_FAILURE);
+		if (execvp(args[0], args) == -1)
+		{
+			perror("execvp");
+			exit(EXIT_FAILURE);
+		}
 	}
 	else
 	{
-		wait(NULL);
+		do {
+			waitpid(pid, &status, WUNTRACED);
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
-}
-/**
- * main - Entry point of the shell program
- *
- * Return: 0 on success
- */
-int main(void)
-{
-	char buffer[BUFFER_SIZE];
-
-	while (1)
-	{
-		display_prompt();
-		if (fgets(buffer, BUFFER_SIZE, stdin) == NULL)
-		{
-			break;
-		}
-		buffer[strcspn(buffer, "\n")] = '\0';
-		execute_command(buffer);
-	}
-	return (0);
+	return (1);
 }
