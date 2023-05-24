@@ -1,5 +1,7 @@
 #include "main.h"
-
+/**
+ * shell_loop - Run the shell loop
+ */
 void shell_loop(void)
 {
 	char *input;
@@ -16,6 +18,12 @@ void shell_loop(void)
 		free(args);
 	} while (status);
 }
+/**
+ * execute - Execute the given command
+ * @args: The array of arguments
+ *
+ * Return: The status of the execution
+ */
 int execute(char **args)
 {
 	pid_t pid;

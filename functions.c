@@ -1,15 +1,8 @@
 #include "main.h"
 /**
- * Read input from stdin and return a dynamically allocated string.
+ * read_input - Read input from the user
  *
- * This function reads a line of input from
- * the standard input (stdin) and returns
- * the input as a dynamically allocated string.
- * The caller is responsible for freeing
- * the allocated memory when it is no longer needed.
- *
- * @return The input string read from stdin.
- * The caller is responsible for freeing the allocated memory.
+ * Return: The input string
  */
 char *read_input()
 {
@@ -20,11 +13,10 @@ char *read_input()
 	return (input);
 }
 /**
- * Splits the input string into an array of tokens based on delimiters.
+ * split_input - Split the input string into an array of arguments
+ * @input: The input string to split
  *
- * @param input The input string to be split.
- * @return The array of tokens. The last element in the array is set to NULL.
- * The caller is responsible for freeing the allocated memory.
+ * Return: The array of arguments
  */
 char **split_input(char *input)
 {
